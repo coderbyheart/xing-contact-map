@@ -1,0 +1,8 @@
+config.ini
+.project
+.pydevproject
+.settings
+*.pyc
+session
+develop/
+virtualenv.py

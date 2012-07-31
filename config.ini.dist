@@ -1,0 +1,4 @@
+[xing]
+api_root = https://api.xing.com
+api_key = <your api key>
+api_secret = <your api secret>
