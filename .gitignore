@@ -6,3 +6,5 @@ config.ini
 session
 develop/
 virtualenv.py
+.idea
+vendor
