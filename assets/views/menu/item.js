@@ -20,11 +20,19 @@ define([
                     el.append(_.template('<a href="#<%= id %>" class="dropdown-toggle" data-toggle="dropdown"><%= label %><b class="caret"></b></a><ul class="dropdown-menu"></ul>', this.model.toJSON()));
                     var ul = el.find('ul');
                     _.each(children, function (child) {
-                        ul.append(_.template('<li class="child"><a href="#<%= id %>"><%= label %></a></li>', child.toJSON()));
+                        if (child.has('id')) {
+                            ul.append(_.template('<li class="child"><a href="#<%= id %>"><%= label %></a></li>', child.toJSON()));
+                        } else if (child.has('href')) {
+                            ul.append(_.template('<li class="child"><a href="<%= href %>"><%= label %></a></li>', child.toJSON()));
+                        }
                     });
                     el.addClass('dropdown');
                 } else {
-                    el.append(_.template('<a href="#<%= id %>"><%= label %></a>', this.model.toJSON()));
+                    if (this.model.has('id')) {
+                        el.append(_.template('<a href="#<%= id %>"><%= label %></a>', this.model.toJSON()));
+                    } else if (this.model.has('href')) {
+                        el.append(_.template('<a href="<%= href %>"><%= label %></a>', this.model.toJSON()));
+                    }
                 }
 
                 var icon = this.model.get('icon');

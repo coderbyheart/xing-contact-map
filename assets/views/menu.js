@@ -17,9 +17,13 @@ define([
             this.model = new MenuGroupCollection();
             this.model.bind("change", this.render, this);
 
+            var leftMenuItems = new MenuItemCollection();
+            leftMenuItems .add(new MenuItem({href:'https://github.com/tacker/xing-contact-map', label:'Quellcode', 'icon':'icon-gift icon-white'}));
+            var leftGroup = new MenuGroup({'align':'left', children:leftMenuItems});
+            this.model.add(leftGroup);
+
             var rightMenuItems = new MenuItemCollection();
             rightMenuItems.add(new MenuItem({id:'login', label:'Anmelden', 'icon':'icon-user icon-white', anonOnly:true}));
-
             var rightGroup = new MenuGroup({'align':'right', children:rightMenuItems});
             this.model.add(rightGroup);
         },
