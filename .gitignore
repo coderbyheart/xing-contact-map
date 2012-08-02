@@ -8,3 +8,4 @@ develop/
 virtualenv.py
 .idea
 vendor
+adapter.wsgi
