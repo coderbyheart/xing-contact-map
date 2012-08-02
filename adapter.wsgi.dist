@@ -1,3 +1,8 @@
+import site
+# Fix this with your path, also keep an eye on the python version
+site.addsitedir('/srv/www/<hostname>/htdocs/develop/lib/python2.6/site-packages/')
+site.addsitedir('/srv/www/<hostname>/htdocs/')
+
 import sys, os, bottle
 from beaker.middleware import SessionMiddleware
 
@@ -17,3 +22,4 @@ import xingmap # This loads your application
 # app = SessionMiddleware(bottle.app(), session_opts)
 
 application = SessionMiddleware(bottle.default_app(), session_opts)
+
