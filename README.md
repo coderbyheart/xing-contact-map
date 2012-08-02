@@ -2,7 +2,10 @@
 
 Visualisiert die eigenen XING-Kontakte auf einer Karte.
 
-http://xingmap.coderbyheart.de/
+## Links
+
+ * Hier läuft eine Instanz der Anwendung: http://xingmap.coderbyheart.de/
+ * [Thread im XING-Developer-Forum](https://www.xing.com/net/prie8c09ex/xingdevs/discuss-with-the-community-682826/started-hacking-visualize-contacts-on-map-41598171/41598171/).
 
 ## Installation der Dependencies
 
