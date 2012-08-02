@@ -2,6 +2,8 @@
 
 Visualisiert die eigenen XING-Kontakte auf einer Karte.
 
+http://xingmap.coderbyheart.de/
+
 ## Installation der Dependencies
 
     make install
