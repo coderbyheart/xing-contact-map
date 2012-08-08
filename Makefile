@@ -10,13 +10,12 @@ all: install
 
 install: remove-deps install-backend-deps install-frontend-deps minify
 
-install-backend-deps: 
-	wget https://raw.github.com/pypa/virtualenv/master/virtualenv.py
-	python2 virtualenv.py develop
-	. develop/bin/activate
-	pip install -U bottle
-	pip install -U oauth2
-	pip install -U beaker
+install-virtualenv:
+	wget https://raw.github.com/pypa/virtualenv/master/virtualenv.py -O ./virtualenv.py
+	python2 ./virtualenv.py VIRTUALENV
+
+install-backend-deps: install-virtualenv
+	. VIRTUALENV/bin/activate; pip install -U bottle oauth2 beaker slimit
 
 install-frontend-deps:
 	mkdir -p ./vendor/js
@@ -31,11 +30,11 @@ install-frontend-deps:
 	
 minify:
 	cat ${UNDERSCORE} ${BACKBONE} > ${VENDOR}/underscore-backbone.js
-	uglifyjs -nc ${VENDOR}/underscore-backbone.js > ${VENDOR}/underscore-backbone.min.js
-	uglifyjs -nc ${REQUIRE} > ${VENDOR}/require.min.js
-	uglifyjs -nc ${REQUIRE_TEXT} > ${VENDOR}/require-text.min.js
-	uglifyjs -nc ${REQUIRE_ASYNC} > ${VENDOR}/require-async.min.js
+	. VIRTUALENV/bin/activate; slimit < ${VENDOR}/underscore-backbone.js > ${VENDOR}/underscore-backbone.min.js
+	. VIRTUALENV/bin/activate; slimit < ${REQUIRE} > ${VENDOR}/require.min.js
+	. VIRTUALENV/bin/activate; slimit < ${REQUIRE_TEXT} > ${VENDOR}/require-text.min.js
+	. VIRTUALENV/bin/activate; slimit < ${REQUIRE_ASYNC} > ${VENDOR}/require-async.min.js
 	
 remove-deps:
-	-rm -r vendor
-	
+	-rm -rf vendor
+	-rm -rf VIRTUALENV

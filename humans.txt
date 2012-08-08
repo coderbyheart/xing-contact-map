@@ -4,8 +4,10 @@ Built by
 Built with
     Python              http://python.org/
     bottle.py           http://bottlepy.org/docs/dev/
+    python-oauth2		https://github.com/simplegeo/python-oauth2/
+    beaker				http://beaker.groovie.org/
+    slimit				http://slimit.org/
     Twitter Bootstrap   http://twitter.github.com/bootstrap/
     require.js          http://requirejs.org
     backbone.js         http://backbonejs.org
-    UglifyJS            https://github.com/mishoo/UglifyJS/
     GNU make            http://www.gnu.org/software/make/
