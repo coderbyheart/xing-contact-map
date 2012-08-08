@@ -15,14 +15,9 @@ define([
             $(this.el).html(this.template({model:this.model.toJSON()}));
             return this;
         },
-        /*
-         complete:function () {
-         this.model.fetch();
-         },
-         */
         onMapsEvent:function () {
             var mapOptions = {
-                center:new google.maps.LatLng(-34.397, 150.644),
+                center:new google.maps.LatLng(51.055207,10.411743),
                 zoom:6,
                 mapTypeId:google.maps.MapTypeId.ROADMAP
             };
