@@ -1,25 +1,19 @@
 import site
 # Fix this with your path, also keep an eye on the python version
-site.addsitedir('/srv/www/<hostname>/htdocs/develop/lib/python2.6/site-packages/')
-site.addsitedir('/srv/www/<hostname>/htdocs/')
+site.addsitedir('/srv/www/<hostname>/VIRTUALENV/lib/python2.6/site-packages/')
+site.addsitedir('/srv/www/<hostname>/')
 
-import sys, os, bottle
+import sys, os
+os.chdir(os.path.dirname(__file__))
+
+import xingmap
+
+import bottle
 from beaker.middleware import SessionMiddleware
-
 session_opts = {
     'session.type': 'file',
     'session.cookie_expires': 300,
     'session.data_dir': '/tmp',
     'session.auto': True
 }
-
-sys.path = ['/home/m/git/xing-map/'] + sys.path
-os.chdir(os.path.dirname(__file__))
-
-import xingmap # This loads your application
-
-# application = bottle.default_app()
-# app = SessionMiddleware(bottle.app(), session_opts)
-
 application = SessionMiddleware(bottle.default_app(), session_opts)
-
