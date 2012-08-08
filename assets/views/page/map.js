@@ -47,7 +47,8 @@ define([
                                 title:contact.get('name')
                             });
                             var infowindow = new google.maps.InfoWindow(
-                                { content:'<a href="' + contact.get('url') + '">' + contact.get('name') + '</a>',
+                                {
+                                    content:'<a href="' + contact.get('url') + '">' + contact.get('name') + '</a><br>' + contact.get('address'),
                                     size:new google.maps.Size(50, 50)
                                 });
                             google.maps.event.addListener(marker, 'click', function (event) {
