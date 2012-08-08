@@ -79,22 +79,34 @@ def auth():
     return result
 
 @route('/api/contact')
-@route('/api/contact/<offset:int>')
-def get_contacts(offset=0):
+def get_contacts():
     session = request.environ.get('beaker.session')
-    data = sign_get('users/me/contacts', {'user_fields': 'id,display_name,permalink,business_address', 'limit': '100', 'offset': offset})
+    if 'user' not in session:
+        return []
     users = [
         {'name': session['user']['display_name'], 'url': session['user']['permalink'], 'address': "%s, %s %s, %s" % (session['user']['business_address']['street'], session['user']['business_address']['zip_code'], session['user']['business_address']['city'], session['user']['business_address']['country'])}
     ]
-    if 'contacts' not in data:
-        return users
-    for userinfo in data['contacts']['users']:
+    contacts = fetch_contacts()
+    for userinfo in contacts:
         user = {'name': userinfo['display_name'], 'url': userinfo['permalink'], 'address': None}
         if 'city' in userinfo['business_address']:
             a = userinfo['business_address']
             user['address'] = "%s, %s %s, %s" % (a['street'], a['zip_code'], a['city'], a['country'])
         users.append(user)
     return json.dumps(users)
+
+def fetch_contacts(contacts=None, offset=0, limit=100):
+    """Ruft alle Kontakte ab. Hier gibt es heftiges Optimierungspotential."""
+    if contacts is None:
+        contacts = []
+    data = sign_get('users/me/contacts', {'user_fields': 'id,display_name,permalink,business_address', 'limit': limit, 'offset': offset})
+    if 'contacts' not in data:
+        return contacts
+    for contact in data['contacts']['users']:
+        contacts.append(contact)
+    if int(data['contacts']['total']) > offset + limit:
+        return fetch_contacts(contacts, offset + limit, limit)
+    return contacts
 
 def sign_get(path, query=None):
     """

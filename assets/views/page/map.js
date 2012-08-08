@@ -17,14 +17,19 @@ define([
         },
         onMapsEvent:function () {
             var mapOptions = {
-                center:new google.maps.LatLng(51.055207,10.411743),
+                center:new google.maps.LatLng(51.055207, 10.411743),
                 zoom:6,
                 mapTypeId:google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map_canvas"),
                 mapOptions);
 
-            this.model.fetch({success:function (model) {
+            var mc = $('#map_canvas');
+            mc.height($(window).height() - 80);
+
+            var m = this.model;
+
+            m.fetch({success:function (model) {
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode({ 'address':model.models[0].get('address')}, function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
