@@ -116,16 +116,19 @@ def sign_get(path, query = None):
 # Static files
     
 @route('/assets/<filepath:path>')
-def server_static(filepath):
+def get_assets(filepath):
     return static_file(filepath, root='./assets')
 
 @route('/vendor/<filepath:path>')
-def server_static(filepath):
+def get_vendor(filepath):
     return static_file(filepath, root='./vendor')
 
+@route('/humans.txt')
+def get_humanstxt():
+    return static_file('humans.txt', root='./')
 
 @route('/app')
-def server_static():
+def get_app():
     return static_file('index.html', root='./')
 
 if __name__ == "__main__":
