@@ -20,6 +20,7 @@ def index():
 
 @route('/oauth_callback')
 def oauth_callback():
+    """Wird aufgerufen, wenn der Nutzer den Zugriff auf seine XING-Daten genehmigt hat."""
     session = request.environ.get('beaker.session')
     if "oauth_token" not in session:
         redirect('/')
@@ -30,42 +31,58 @@ def oauth_callback():
     resp, content = client.request(XING_API_ROOT + "/v1/access_token", "POST", urllib.urlencode({"oauth_token": session['oauth_token'], "oauth_verifier": request.query.oauth_verifier}))
     data = dict(urlparse.parse_qsl(content))
     
-    session['oauth_token'] = data['oauth_token']
-    session['oauth_token_secret'] = data['oauth_token_secret']
-    session['user_id'] = data['user_id']
-    
-    # Load user data
-    data = sign_get("users/" + session['user_id'])
-    session['user'] = data['users'][0]
-       
-    session.save()
-    
-    redirect('/app#map')
-    
+    try:
+        session['oauth_token'] = data['oauth_token']
+        session['oauth_token_secret'] = data['oauth_token_secret']
+        session['user_id'] = data['user_id']
+        try:
+            data = sign_get("users/" + session['user_id'])
+            session['user'] = data['users'][0]
+            session.save()
+            redirect('/app#map')
+        except KeyError:
+            print "Konnte Daten des Nutzers nicht abrufen."        
+    except KeyError:
+        print "Konnte access token nicht abrufen"
+    session.invalidate()
+    redirect('/app')
+   
 @route('/logout')
 def logout():
     session = request.environ.get('beaker.session')
     session.invalidate()
-    redirect('/')
+    session.save()
+    redirect('/app')
     
 @route('/api/auth')
 def auth():
     session = request.environ.get('beaker.session')
+    result = {'authorized': False}
     if "user" not in session:
         consumer = oauth.Consumer(key=XING_API_KEY, secret=XING_API_SECRET)
         client = oauth.Client(consumer)
         resp, content = client.request(XING_API_ROOT + "/v1/request_token", "POST", urllib.urlencode({"oauth_callback": request.urlparts.scheme + "://" + request.urlparts.netloc + "/oauth_callback"}))
         data = dict(urlparse.parse_qsl(content))
-        session['oauth_token'] = data['oauth_token']
-        session['oauth_token_request_secret'] = data['oauth_token_secret']
-        session.save()
-        return {'authorized': False, 'auth_url': "%s/v1/authorize?oauth_token=%s" % (XING_API_ROOT, data['oauth_token'])}
-    return {'authorized': True, 'name': session['user']['display_name']}
+        if 'oauth_token' in data:
+            # Already authed
+            session['oauth_token'] = data['oauth_token']
+            session['oauth_token_request_secret'] = data['oauth_token_secret']
+            session.save()
+            result['auth_url'] = "%s/v1/authorize?oauth_token=%s" % (XING_API_ROOT, data['oauth_token'])
+        else:
+            load_user_data()
+            result['authorized'] = True;
+            result['name'] = session['user']['display_name']            
+    else:
+        result['authorized'] = True;
+        result['name'] = session['user']['display_name']
+    return result
 
 @route('/api/contact')
-def get_contacts():
+@route('/api/contact/<offset:int>')
+def get_contacts(offset=0):
     session = request.environ.get('beaker.session')
-    data = sign_get('users/me/contacts', {'user_fields': 'id,display_name,permalink,business_address', 'limit': '100'})
+    data = sign_get('users/me/contacts', {'user_fields': 'id,display_name,permalink,business_address', 'limit': '100', 'offset': offset})
     users = [
         {'name': session['user']['display_name'], 'url': session['user']['permalink'], 'address': "%s, %s %s, %s" % (session['user']['business_address']['street'], session['user']['business_address']['zip_code'], session['user']['business_address']['city'], session['user']['business_address']['country'])}
     ]
@@ -79,12 +96,13 @@ def get_contacts():
         users.append(user)
     return json.dumps(users)
 
-def sign_get(path, query = None):
+def sign_get(path, query=None):
     """
     Signed GET-Requests are broken in the oauth2 lib
     as it tries to create a body signature
     """
     session = request.environ.get('beaker.session')
+       
     method = "GET"    
     consumer = oauth.Consumer(key=XING_API_KEY, secret=XING_API_SECRET)
     
@@ -105,13 +123,17 @@ def sign_get(path, query = None):
     req = oauth.Request(method=method, url=url, parameters=params)
     token = oauth.Token(session['oauth_token'], session['oauth_token_secret'])
     signature = sig_method.sign(req, consumer, token)
-     
-    signed_url = req.to_url() + '&oauth_signature=' + signature
+    signed_url = req.to_url() + '&oauth_signature=' + oauth.escape(signature)
     
     client = httplib2.Http()
     resp, content = client.request(signed_url)
     
-    return json.loads(content)
+    data = json.loads(content)
+    if (int(resp['status']) > 400):
+        print "Signed GET request failed: " + signed_url
+        print data
+        return []
+    return data 
 
 # Static files
     
