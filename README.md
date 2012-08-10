@@ -2,6 +2,10 @@
 
 Visualisiert die eigenen XING-Kontakte auf einer Karte.
 
+## Bekannte Probleme
+
+Siehe [Issues](https://github.com/tacker/xing-contact-map/issues).
+
 ## Links
 
  * Hier läuft eine Instanz der Anwendung: http://xingmap.coderbyheart.de/
