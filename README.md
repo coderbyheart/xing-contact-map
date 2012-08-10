@@ -7,7 +7,15 @@ Visualisiert die eigenen XING-Kontakte auf einer Karte.
  * Hier läuft eine Instanz der Anwendung: http://xingmap.coderbyheart.de/
  * [Thread im XING-Developer-Forum](https://www.xing.com/net/prie8c09ex/xingdevs/discuss-with-the-community-682826/started-hacking-visualize-contacts-on-map-41598171/41598171/).
 
-## Installation der Dependencies
+## Setup
+
+### Konfiguration
+
+Die Datei `config.ini.dist` nach `config.ini` kopieren und die eigenen XING-API-Zugangsdaten eintragen.
+
+Die Datei `assets/config.js.dist` nach `assets/config.js` kopieren und die eigenen Google-Maps-API-Zugangsdaten eintragen.
+
+### Installation der Dependencies
 
     make install
 

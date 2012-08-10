@@ -9,3 +9,4 @@ virtualenv.py
 vendor
 adapter.wsgi
 VIRTUALENV
+assets/config.js

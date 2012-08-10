@@ -1,9 +1,10 @@
 define([
     'events',
+    'config',
     'views/page/base',
     'collections/contact',
     'text!templates/page/map.html'
-], function (Events, PageViewBase, ContactCollection, Template) {
+], function (Events, Config, PageViewBase, ContactCollection, Template) {
     return PageViewBase.extend({
         template:_.template(Template),
         initialize:function () {
@@ -12,7 +13,7 @@ define([
 
         },
         render:function () {
-            $(this.el).html(this.template({model:this.model.toJSON()}));
+            $(this.el).html(this.template({model:this.model.toJSON(), config:Config}));
             return this;
         },
         onMapsEvent:function () {
